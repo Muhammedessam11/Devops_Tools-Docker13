@@ -1,0 +1,35 @@
+version: '3'
+services:
+  # Node.js service for the chat app
+  web:
+    image: node:16
+    container_name: chat-app
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+      - mongo
+    command: bash -c "npm install && node index.js"
+
+  # Redis service for session management
+  redis:
+    image: redis:alpine
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+  
+  # MongoDB service for storing chat messages and user data
+  mongo:
+    image: mongo:4.4
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+    driver: local
